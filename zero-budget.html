@@ -1,0 +1,386 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Part 2 of AI Film School: make a film with Claude alone or with free tools, in 10 short lessons.">
+<style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>Zero-Budget AI Film</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Source+Sans+3:ital,wght@0,400;0,600;0,700;1,400&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+/* Layout: sticky lesson rail on the left, one reading column on the right. Same family as AI Film School, cooler ink and a coral accent. */
+:root{
+  --bg:#f0f0f5; --paper:#ffffff; --ink:#1a1a2b; --muted:#5a5a72; --line:#d6d6e3;
+  --teal:#3b3fa0; --teal-soft:#e3e4f5; --yellow:#e8674a; --yellow-soft:#fbe3dc;
+  --good:#2f7a4a; --bad:#b4442f; --good-soft:#e1f1e6; --bad-soft:#f8e3de;
+  --display:"Bricolage Grotesque", "Avenir Next", "Segoe UI", sans-serif;
+  --body:"Source Sans 3", "Segoe UI", system-ui, sans-serif;
+  --mono:"JetBrains Mono", ui-monospace, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#12121c; --paper:#1a1a28; --ink:#e6e6f0; --muted:#a3a3bb; --line:#2e2e42;
+  --teal:#a9acf5; --teal-soft:#25264a; --yellow:#f38a70; --yellow-soft:#3a201a;
+  --good:#7fcf98; --bad:#f09a86; --good-soft:#18301f; --bad-soft:#3a1e18; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#12121c; --paper:#1a1a28; --ink:#e6e6f0; --muted:#a3a3bb; --line:#2e2e42;
+  --teal:#a9acf5; --teal-soft:#25264a; --yellow:#f38a70; --yellow-soft:#3a201a;
+  --good:#7fcf98; --bad:#f09a86; --good-soft:#18301f; --bad-soft:#3a1e18; color-scheme:dark}
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font:400 17px/1.6 var(--body);
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+a{color:var(--teal)}
+code{font-family:var(--mono);font-size:.86em;background:var(--teal-soft);padding:1px 5px;border-radius:4px}
+:focus-visible{outline:3px solid var(--yellow);outline-offset:2px}
+h1,h2,h3{font-family:var(--display);text-wrap:balance;line-height:1.15;margin:0}
+.wrap{max-width:1180px;margin:0 auto;display:grid;grid-template-columns:250px minmax(0,1fr);gap:48px;padding-block:40px 80px}
+@media (max-width:860px){.wrap{grid-template-columns:minmax(0,1fr);gap:24px;padding-block:24px 60px}}
+nav.rail{position:sticky;top:calc(env(safe-area-inset-top,0px) + 24px);align-self:start;display:flex;flex-direction:column;gap:14px}
+@media (max-width:860px){nav.rail{position:static}}
+.slate{font-family:var(--mono);font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.progress{height:6px;background:var(--line);border-radius:3px;overflow:hidden}
+.progress span{display:block;height:100%;width:0;background:var(--yellow);transition:width .3s}
+nav.rail ol{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:2px}
+@media (max-width:860px){nav.rail ol{display:none}}
+nav.rail a{display:flex;gap:10px;align-items:baseline;padding:5px 8px;border-radius:6px;text-decoration:none;color:var(--ink);font-size:15px}
+nav.rail a:hover{background:var(--teal-soft)}
+nav.rail a .n{font-family:var(--mono);font-size:11px;color:var(--muted);min-width:22px}
+nav.rail a.done .t{text-decoration:line-through;color:var(--muted)}
+main{min-width:0;display:flex;flex-direction:column;gap:56px}
+header.intro{display:flex;flex-direction:column;gap:16px;max-width:68ch}
+header.intro h1{font-size:clamp(34px,5vw,54px);font-weight:800;letter-spacing:-.02em}
+header.intro p{margin:0;color:var(--muted);font-size:19px}
+section.block{display:flex;flex-direction:column;gap:18px;max-width:72ch}
+section.block>h2{font-size:30px;font-weight:800}
+.lead{margin:0;font-size:18px}
+.paths{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+.path{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:8px;min-width:0}
+.path .tag{font-family:var(--mono);font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--yellow)}
+.path h3{font-size:20px}
+.path p{margin:0;font-size:15.5px}
+.path ul{margin:0;padding-left:1.1em;font-size:15px;color:var(--muted)}
+.tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:10px;background:var(--paper)}
+table{border-collapse:collapse;width:100%;min-width:600px;font-size:15.5px}
+th,td{text-align:left;padding:10px 14px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-family:var(--mono);font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:500}
+tr:last-child td{border-bottom:0}
+td:first-child{font-weight:600}
+.pill{display:inline-block;font-family:var(--mono);font-size:11px;padding:1px 8px;border-radius:999px;white-space:nowrap}
+.pill.free{background:var(--good-soft);color:var(--good)}
+.pill.limit{background:var(--yellow-soft);color:var(--yellow)}
+.pill.paid{background:var(--bad-soft);color:var(--bad)}
+article.lesson{background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:28px clamp(18px,4vw,36px);display:flex;flex-direction:column;gap:16px;max-width:76ch;scroll-margin-top:20px}
+.lhead{display:flex;justify-content:space-between;gap:16px;align-items:flex-start;flex-wrap:wrap}
+.lhead .slate{display:block;margin-bottom:6px}
+.lhead h2{font-size:clamp(24px,3vw,30px);font-weight:800}
+.why{margin:0;padding:12px 16px;background:var(--teal-soft);border-radius:8px}
+.why b{font-family:var(--mono);font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--teal);margin-right:8px;font-weight:500}
+article h3{font-size:18px;font-weight:600;margin-top:4px}
+ol.steps{margin:0;padding-left:1.4em;display:flex;flex-direction:column;gap:8px}
+ol.steps li::marker{font-family:var(--mono);color:var(--teal);font-size:14px}
+.dd{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media (max-width:640px){.dd{grid-template-columns:1fr}}
+.dd>div{border-radius:8px;padding:12px 14px;min-width:0}
+.dd .do{background:var(--good-soft)} .dd .dont{background:var(--bad-soft)}
+.dd h4{margin:0 0 6px;font-family:var(--mono);font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;font-weight:500}
+.dd .do h4{color:var(--good)} .dd .dont h4{color:var(--bad)}
+.dd ul{margin:0;padding-left:1.1em;display:flex;flex-direction:column;gap:4px;font-size:15.5px}
+.story{margin:0;border-left:3px solid var(--yellow);padding:4px 0 4px 14px;color:var(--muted);font-size:15.5px}
+.story b{color:var(--ink)}
+.prompt{font-family:var(--mono);font-size:13.5px;line-height:1.55;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:12px 14px;white-space:pre-wrap;overflow-wrap:anywhere;margin:0}
+.ex{display:grid;gap:10px}
+.ex .lbl{font-family:var(--mono);font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.copyrow{display:flex;justify-content:flex-end}
+button.copy{font:500 12px var(--mono);letter-spacing:.04em;background:var(--paper);color:var(--teal);border:1px solid var(--line);border-radius:6px;padding:4px 10px;cursor:pointer}
+button.copy:hover{background:var(--teal-soft)}
+label.check{display:flex;gap:8px;align-items:center;font-size:14px;color:var(--muted);cursor:pointer;white-space:nowrap;user-select:none;padding:6px 10px;border:1px solid var(--line);border-radius:999px}
+label.check input{width:16px;height:16px;accent-color:var(--teal)}
+label.check:has(input:checked){background:var(--yellow-soft);border-color:var(--yellow);color:var(--ink)}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+.term{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:12px 14px}
+.term b{display:block;font-family:var(--display);font-size:17px}
+.term span{font-size:15px;color:var(--muted)}
+ul.checklist{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
+ul.checklist li{display:flex;gap:10px;align-items:baseline}
+ul.checklist li::before{content:"";flex:0 0 12px;height:12px;border:2px solid var(--teal);border-radius:3px;transform:translateY(2px)}
+.sources li{margin-bottom:6px}
+footer{color:var(--muted);font-size:14px;max-width:72ch}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+<nav class="rail" aria-label="Lessons">
+  <div class="slate">Course · 10 lessons</div>
+  <div class="progress" aria-hidden="true"><span id="bar"></span></div>
+  <div class="slate" id="count">0 of 10 done</div>
+  <ol id="toc"></ol>
+</nav>
+
+<main>
+<header class="intro">
+  <div class="slate">Part 2 of AI Film School · Claude + free tools</div>
+  <h1>Make a film with Claude and free tools</h1>
+  <p>Part 1 used a paid studio and thousands of generations. This part does the same job with almost no money: Claude writes and builds, and free tools fill the gaps. The craft from Part 1 still applies. Only the way pictures are made changes.</p>
+</header>
+
+<section class="block" id="paths">
+  <h2>Pick your path first</h2>
+  <p class="lead">Claude cannot generate photos or video clips. It writes, plans, and builds animation as code. That gives you three paths:</p>
+  <div class="paths">
+    <div class="path"><span class="tag">Path A · Claude only</span><h3>Code film</h3><p>Claude builds the whole film as code: shapes, light, type, 3D and sound. A free renderer turns it into an MP4.</p><ul><li>Fully free (apart from your Claude plan)</li><li>No watermark, no daily limit</li><li>Best for: animation, mood pieces, explainers, music videos, ads with type</li><li>Weak at: realistic people and animals</li></ul></div>
+    <div class="path"><span class="tag">Path B · Claude + free AI</span><h3>Clip film</h3><p>Claude is your writer and director. Free daily credits on AI image and video tools make the shots.</p><ul><li>Realistic look possible</li><li>Slow: about one short clip a day per tool</li><li>Watermarks and licence limits on many free plans</li></ul></div>
+    <div class="path"><span class="tag">Path C · Mix</span><h3>Hybrid</h3><p>Use a few AI or free stock clips for the realistic moments. Claude's code does titles, transitions, maps, graphics and sound.</p><ul><li>Spends free credits only where they matter</li><li>Often the best result for zero money</li></ul></div>
+  </div>
+  <p class="story"><b>Rule of thumb:</b> if your story needs a real face on screen, go B or C. If it can be told with light, shapes, objects, places, text and sound, go A. You get unlimited retries.</p>
+</section>
+
+<section class="block" id="tools">
+  <h2>The free toolbox</h2>
+  <p class="lead">Free plans change often. Check each site's current limits and licence before you rely on it.</p>
+  <div class="tablewrap"><table>
+    <thead><tr><th>Job</th><th>Tool</th><th>Cost</th></tr></thead>
+    <tbody>
+      <tr><td>Story, script, shot list, prompts</td><td>Claude (claude.ai)</td><td><span class="pill free">free plan</span> <span class="pill limit">limits</span></td></tr>
+      <tr><td>Build and render a code film on your computer</td><td>Claude Code + Node.js, Python, Chrome, ffmpeg</td><td><span class="pill paid">paid Claude plan</span> tools <span class="pill free">free</span></td></tr>
+      <tr><td>Quick code animation in the browser</td><td>Claude artifact (HTML + Canvas / SVG / three.js)</td><td><span class="pill free">free plan</span></td></tr>
+      <tr><td>Fonts</td><td>Google Fonts (open licences)</td><td><span class="pill free">free</span></td></tr>
+      <tr><td>AI video clips</td><td>Free daily credits on tools such as PixVerse, Hailuo, Kling, Google Flow</td><td><span class="pill limit">daily credits</span></td></tr>
+      <tr><td>Real stock footage and photos</td><td>Pexels, Pixabay</td><td><span class="pill free">free</span> check licence</td></tr>
+      <tr><td>3D scenes</td><td>Blender</td><td><span class="pill free">free, open source</span></td></tr>
+      <tr><td>Voice-over</td><td>Your own voice · macOS <code>say</code> · Kokoro or Piper (run on your computer)</td><td><span class="pill free">free</span></td></tr>
+      <tr><td>Sound effects</td><td>freesound.org (Creative Commons, check each file) · sound made in code</td><td><span class="pill free">free</span></td></tr>
+      <tr><td>Music</td><td>Free Music Archive, Pixabay Music, YouTube Audio Library · music written in code</td><td><span class="pill free">free</span> check licence</td></tr>
+      <tr><td>Editing</td><td>DaVinci Resolve · Kdenlive · Shotcut · CapCut (free tier) · or ffmpeg run by Claude</td><td><span class="pill free">free</span></td></tr>
+      <tr><td>Audio cleanup</td><td>Audacity</td><td><span class="pill free">free, open source</span></td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<article class="lesson" id="l1" data-title="Choose an idea that fits">
+  <div class="lhead"><div><span class="slate">Lesson 01</span><h2>Choose an idea your tools can make</h2></div><label class="check"><input type="checkbox" id="c1"> Done</label></div>
+  <p class="why"><b>Why</b>With no budget, the idea has to fit the tools. A good fit looks rich. A bad fit looks cheap however hard you try.</p>
+  <ol class="steps">
+    <li>Tell Claude your idea in one or two sentences, and which path you picked.</li>
+    <li>Ask: "What will be hard to make with these tools? Give me 2–3 ways to tell the same story that suit them."</li>
+    <li>Keep the subject and change how it is shown. A lonely old man can become his empty chair, his window light and his voice.</li>
+    <li>Pick a length. Start with 30–60 seconds. Short and finished beats long and half-made.</li>
+  </ol>
+  <div class="dd">
+    <div class="do"><h4>Code is good at</h4><ul><li>Light, colour, weather, water, particles</li><li>Objects, rooms, cities, maps, space</li><li>Type, diagrams, data, interfaces</li><li>Stylised or silhouette characters</li></ul></div>
+    <div class="dont"><h4>Code is bad at</h4><ul><li>Realistic faces and bodies acting</li><li>Realistic animals</li><li>Long talking scenes on camera</li></ul></div>
+  </div>
+</article>
+
+<article class="lesson" id="l2" data-title="Write it with Claude">
+  <div class="lhead"><div><span class="slate">Lesson 02</span><h2>Write the beats, second by second</h2></div><label class="check"><input type="checkbox" id="c2"> Done</label></div>
+  <p class="why"><b>Why</b>A plan with seconds in it is what turns "a nice idea" into a film Claude can actually build.</p>
+  <ol class="steps">
+    <li>Ask Claude for a one-line logline, then a list of <b>beats</b>: what happens, from second X to second Y.</li>
+    <li>Check every beat changes something you see or hear. A beat that changes nothing gets cut or given a job.</li>
+    <li>The first 2 seconds must move and start with an action. No still title, no fade from black.</li>
+    <li>Write any words (titles, narration) yourself or check them out loud. Remove lines that sound like an ad or like AI ("not X, but Y", "whispers", "a symphony of").</li>
+  </ol>
+  <div class="ex">
+    <span class="lbl">Copy this to Claude</span>
+    <p class="prompt" id="p1">I want to make a 45-second film with [code only / free AI clips / a mix]. Idea: [your idea]. Write a logline, then beats with exact seconds (0.0–3.5 s: …). Rules: the first 2 seconds move and start with an action; every beat changes something seen or heard; one action per beat; say what we hear in each beat. Flag anything my tools will struggle with.</p>
+    <div class="copyrow"><button class="copy" data-target="p1">Copy prompt</button></div>
+  </div>
+</article>
+
+<article class="lesson" id="l3" data-title="Set the look">
+  <div class="lhead"><div><span class="slate">Lesson 03</span><h2>Set one look before anything moves</h2></div><label class="check"><input type="checkbox" id="c3"> Done</label></div>
+  <p class="why"><b>Why</b>Moving video is slow to make and fix. A still frame shows a wrong look in seconds.</p>
+  <ol class="steps">
+    <li>Ask Claude for a <b>director card</b>: palette (4–6 colours), fonts, light, camera style, transitions, and a reason for each from <i>this</i> story.</li>
+    <li>Path A: ask for one or two <b>stills</b> (single frames) of key moments and judge them. Path B: generate keyframe images first.</li>
+    <li>Fix the look on stills. Only then make anything move.</li>
+  </ol>
+  <div class="dd">
+    <div class="do"><h4>Do</h4><ul><li>Pick fonts and colours with a reason</li><li>Use the 60/30/10 colour split from Part 1</li><li>Ask "could this frame belong to another film?" If yes, redo it</li></ul></div>
+    <div class="dont"><h4>Don't</h4><ul><li>Accept default looks: purple gradients, neon, glowing lanterns, lighthouses, unless the story needs them</li><li>Let every shot look the same. Change size and camera move from shot to shot</li></ul></div>
+  </div>
+</article>
+
+<article class="lesson" id="l4" data-title="Path A: build in code">
+  <div class="lhead"><div><span class="slate">Lesson 04</span><h2>Path A: let Claude build the film in code</h2></div><label class="check"><input type="checkbox" id="c4"> Done</label></div>
+  <p class="why"><b>Why</b>Code has no credit meter. You can change one number and render again as often as you like.</p>
+  <h3>The quick way (free claude.ai plan)</h3>
+  <ol class="steps">
+    <li>Paste your beats and director card into Claude. Ask for "one HTML file that plays the film in the browser, with Web Audio sound".</li>
+    <li>It appears as an artifact you can play. Give notes as numbers: "beat 3 is 1 second too long", "camera pushes in 20% slower".</li>
+    <li>To get a video file, screen-record the playing page (macOS: Cmd+Shift+5; Windows: Win+Alt+R with Xbox Game Bar). Quality depends on your computer.</li>
+  </ol>
+  <h3>The proper way (Claude Code on your computer)</h3>
+  <ol class="steps">
+    <li>Install the free tools: Node.js, Python, Google Chrome, ffmpeg.</li>
+    <li>Ask Claude Code to build the film as a web page where <b>every frame is a pure function of time</b>. The same frame always looks the same, so it renders without jitter.</li>
+    <li>Claude renders a <b>half-size draft</b> frame by frame with headless Chrome and joins them with ffmpeg. You watch and give notes.</li>
+    <li>Up to two rounds of notes on drafts, then the full-size final.</li>
+    <li>A ready-made film-from-code skill (such as cinecode) does these steps for you, with checks and gates.</li>
+  </ol>
+  <div class="ex">
+    <span class="lbl">Copy this to Claude Code</span>
+    <p class="prompt" id="p2">Build this film as one web page: [paste beats + director card]. Every frame must be a pure function of time (frame index → picture; seeded randomness; assets loaded before the first frame). Show me 2 stills of key moments first. After I approve, render a half-size draft MP4 with headless Chrome + ffmpeg, with sound, and tell me which seconds to listen to.</p>
+    <div class="copyrow"><button class="copy" data-target="p2">Copy prompt</button></div>
+  </div>
+</article>
+
+<article class="lesson" id="l5" data-title="Path B: free AI clips">
+  <div class="lhead"><div><span class="slate">Lesson 05</span><h2>Path B: make shots on free daily credits</h2></div><label class="check"><input type="checkbox" id="c5"> Done</label></div>
+  <p class="why"><b>Why</b>Free credits buy roughly one short clip a day per tool. Every try has to count.</p>
+  <ol class="steps">
+    <li>Ask Claude to turn the beats into a <b>shot list</b>, one short shot per line, with a style prefix on top (Part 1, Lesson 02).</li>
+    <li>Make a <b>keyframe image</b> for each shot first. Images are cheaper than video, and the video copies the image's light and mistakes.</li>
+    <li>Use image-to-video with that keyframe, not text-to-video. You get more control and fewer wasted credits.</li>
+    <li>Spread the work over days and over several tools' free credits. Keep a list: shot, tool, date, result.</li>
+    <li>Keep shots short (3–5 s). In editing, cut on movement to hide changes between tools.</li>
+  </ol>
+  <div class="dd">
+    <div class="do"><h4>Do</h4><ul><li>Fix the prompt in Claude before spending credits again</li><li>Use the best 1–2 seconds of a failed clip</li><li>Read each tool's free-plan terms: watermark, resolution, commercial use</li></ul></div>
+    <div class="dont"><h4>Don't</h4><ul><li>Plan scenes that need the same face in 20 shots</li><li>Count on free limits staying the same</li><li>Upload other people's faces or brands</li></ul></div>
+  </div>
+</article>
+
+<article class="lesson" id="l6" data-title="Path C: mix it">
+  <div class="lhead"><div><span class="slate">Lesson 06</span><h2>Path C: mix code with real or AI shots</h2></div><label class="check"><input type="checkbox" id="c6"> Done</label></div>
+  <p class="why"><b>Why</b>A few strong real-looking shots plus clean code graphics often look more finished than either alone.</p>
+  <ol class="steps">
+    <li>Mark in the beat list which moments <b>need</b> realism (a face, a hand, a real street). Everything else becomes code.</li>
+    <li>Get those few shots from free stock (Pexels, Pixabay), your own phone, or free AI credits.</li>
+    <li>Give the clips to Claude Code. It can put them inside the code film: titles over them, colour matching, transitions, maps, split screens.</li>
+    <li>Match the look: ask Claude to grade code scenes and clips to the same palette and grain.</li>
+  </ol>
+  <p class="story">Your own phone is a free camera. Ten seconds of real rain on a window, filmed by you, beats a minute of generated rain.</p>
+</article>
+
+<article class="lesson" id="l7" data-title="Sound for free">
+  <div class="lhead"><div><span class="slate">Lesson 07</span><h2>Sound for free</h2></div><label class="check"><input type="checkbox" id="c7"> Done</label></div>
+  <p class="why"><b>Why</b>Viewers forgive simple pictures. They don't forgive bad sound.</p>
+  <ol class="steps">
+    <li>Add sound from the first draft: background sound (room, street, wind) per scene, plus effects on the exact frame they happen.</li>
+    <li><b>Music:</b> pick a real track with an open licence (Free Music Archive, Pixabay Music, YouTube Audio Library), or ask Claude to write simple music in code.</li>
+    <li><b>Voice:</b> best is your own voice on a phone, in a quiet room. Free machine voices: macOS <code>say</code>, or Kokoro / Piper on your computer.</li>
+    <li>Never use a raw machine voice. Ask Claude to treat it: slower pace, small pauses, a little room echo, EQ.</li>
+    <li>Make the final loudness about −14 LUFS so it plays well on YouTube and phones. Claude can do this with ffmpeg.</li>
+  </ol>
+  <p class="story"><b>Important:</b> Claude can measure audio but cannot hear it. You must listen to every draft, with headphones.</p>
+</article>
+
+<article class="lesson" id="l8" data-title="Edit and finish">
+  <div class="lhead"><div><span class="slate">Lesson 08</span><h2>Edit and finish</h2></div><label class="check"><input type="checkbox" id="c8"> Done</label></div>
+  <p class="why"><b>Why</b>Editing is where loose pieces become a film. The free editors are as good as paid ones for short work.</p>
+  <ol class="steps">
+    <li>Path A: the film comes out already edited. Ask Claude to change cuts by seconds.</li>
+    <li>Path B / C: put clips on a timeline in DaVinci Resolve, Kdenlive, Shotcut or CapCut, with music from the start.</li>
+    <li>Cut on movement. Use L-cuts (sound carries into the next shot). Never repeat the same transition twice in a row.</li>
+    <li>Watch the film on your phone. Titles must be readable at that size.</li>
+    <li>Export MP4 (H.264), 1080p, 24 or 30 fps.</li>
+  </ol>
+</article>
+
+<article class="lesson" id="l9" data-title="Review like a stranger">
+  <div class="lhead"><div><span class="slate">Lesson 09</span><h2>Review like a stranger</h2></div><label class="check"><input type="checkbox" id="c9"> Done</label></div>
+  <p class="why"><b>Why</b>After many rounds you stop seeing problems. Part 1 used a "slop director". Alone, you need other tricks.</p>
+  <ol class="steps">
+    <li>Show it to one person who knows nothing about it. Ask them to tell you the story back. Where they get lost, fix.</li>
+    <li>Ask Claude to look at stills from the draft and list what looks cheap or unclear. Give it the beat list so it can compare.</li>
+    <li>Look frame by frame at cuts for flashes, jumps and pops.</li>
+    <li>Rest one day, then watch once more with fresh eyes.</li>
+  </ol>
+</article>
+
+<article class="lesson" id="l10" data-title="Licences and sharing">
+  <div class="lhead"><div><span class="slate">Lesson 10</span><h2>Licences and sharing</h2></div><label class="check"><input type="checkbox" id="c10"> Done</label></div>
+  <p class="why"><b>Why</b>"Free to use" is not always "free for anything". One wrong track can get your video blocked.</p>
+  <ol class="steps">
+    <li>Keep a credits file from day one: every font, track, sound and clip, with its source and licence.</li>
+    <li>Check if the licence asks for credit (CC BY), bans commercial use (NC), or allows anything (CC0).</li>
+    <li>Check each AI tool's free-plan terms before posting or using the film for work.</li>
+    <li>Put the credits at the end of the film or in the video description.</li>
+  </ol>
+</article>
+
+<section class="block" id="checklist">
+  <h2>Before you call it finished</h2>
+  <ul class="checklist">
+    <li>The first 2 seconds move and start with an action.</li>
+    <li>Every beat changes something seen or heard.</li>
+    <li>One look throughout, but shot sizes and moves change.</li>
+    <li>No raw machine voice, no music you can't use.</li>
+    <li>You listened to it with headphones, all the way through.</li>
+    <li>Titles read on a phone screen.</li>
+    <li>Loudness about −14 LUFS.</li>
+    <li>A credits list for every font, track, sound and clip.</li>
+  </ul>
+</section>
+
+<section class="block" id="words">
+  <h2>Words to know</h2>
+  <div class="cards">
+    <div class="term"><b>Beat</b><span>One moment of the film where something changes, with start and end seconds.</span></div>
+    <div class="term"><b>Director card</b><span>The look plan: colours, fonts, light, camera and transitions, each with a reason.</span></div>
+    <div class="term"><b>Still</b><span>A single frame used to judge the look before rendering video.</span></div>
+    <div class="term"><b>Render</b><span>Turning the code film into real video frames.</span></div>
+    <div class="term"><b>Headless Chrome</b><span>Chrome running without a window, used to capture each frame.</span></div>
+    <div class="term"><b>ffmpeg</b><span>A free command-line tool that joins frames and sound into an MP4.</span></div>
+    <div class="term"><b>Keyframe</b><span>The image an AI video clip starts from.</span></div>
+    <div class="term"><b>LUFS</b><span>A loudness measure. About −14 is normal for online video.</span></div>
+    <div class="term"><b>CC0 / CC BY / NC</b><span>Licence types: no rules, give credit, no commercial use.</span></div>
+  </div>
+</section>
+
+<section class="block" id="sources">
+  <h2>Sources and notes</h2>
+  <p>The free-credit figures change all the time, so this page names tools rather than numbers. Compare current plans here:</p>
+  <ul class="sources">
+    <li><a href="https://www.imagine.art/insights/best-free-ai-video-generators">Best free AI video generator plans, checked (2026)</a></li>
+    <li><a href="https://www.stork.ai/blog/best-free-ai-video-generators-2026">Best Free AI Video Generators (2026): Free Tiers Compared</a></li>
+    <li><a href="https://plyry.com/guides/free-daily-ai-video-generators">Free AI Video Generators With Daily Credits (2026)</a></li>
+    <li><a href="https://www.codesota.com/text-to-speech/piper-vs-kokoro">Piper vs Kokoro: free local text to speech</a></li>
+  </ul>
+  <p>Part 1, the paid workflow: <a href="./">AI Film School</a>.</p>
+</section>
+
+<footer>Unofficial notes. Not affiliated with Anthropic or any tool named here. Your "Done" ticks are saved only in this browser.</footer>
+</main>
+</div>
+
+<script>
+(function(){
+  const lessons=[...document.querySelectorAll('article.lesson')];
+  const toc=document.getElementById('toc');
+  lessons.forEach((a,i)=>{
+    const li=document.createElement('li');
+    li.innerHTML='<a href="#'+a.id+'"><span class="n">'+String(i+1).padStart(2,'0')+'</span><span class="t"></span></a>';
+    li.querySelector('.t').textContent=a.dataset.title;
+    toc.appendChild(li);
+  });
+  const KEY='zero-budget-film-done';
+  let saved={};
+  try{saved=JSON.parse(localStorage.getItem(KEY)||'{}')||{}}catch(e){}
+  function update(){
+    let n=0;
+    lessons.forEach((a,i)=>{const c=a.querySelector('input');if(c.checked)n++;toc.children[i].firstChild.classList.toggle('done',c.checked)});
+    document.getElementById('bar').style.width=(n/lessons.length*100)+'%';
+    document.getElementById('count').textContent=n+' of '+lessons.length+' done';
+  }
+  lessons.forEach(a=>{
+    const c=a.querySelector('input');
+    c.checked=!!saved[c.id];
+    c.addEventListener('change',()=>{saved[c.id]=c.checked;try{localStorage.setItem(KEY,JSON.stringify(saved))}catch(e){}update()});
+  });
+  update();
+  document.querySelectorAll('button.copy').forEach(b=>b.addEventListener('click',()=>{
+    const el=document.getElementById(b.dataset.target);
+    const done=()=>{b.textContent='Copied';setTimeout(()=>b.textContent='Copy prompt',1500)};
+    const fallback=()=>{const r=document.createRange();r.selectNodeContents(el);const s=getSelection();s.removeAllRanges();s.addRange(r);b.textContent='Selected, press Cmd+C'};
+    try{navigator.clipboard.writeText(el.textContent).then(done,fallback)}catch(e){fallback()}
+  }));
+})();
+</script>
+</body>
+</html>
