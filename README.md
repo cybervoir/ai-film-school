@@ -4,7 +4,8 @@ An unofficial, plain-language study guide to making realistic AI films with Clau
 
 **Open the guides** (GitHub Pages):
 
-- Part 1, the paid studio workflow: `index.html`
+- Home page with both courses: `index.html`
+- Part 1, the paid studio workflow: `part-1.html`
 - Part 2, Zero-Budget AI Film (Claude alone or with free tools): `zero-budget.html`
 
 ## What's inside
