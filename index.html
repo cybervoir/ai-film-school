@@ -1,0 +1,428 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Unofficial 10-lesson study guide on making realistic AI films with Claude and Higgsfield, based on public Higgsfield AI YouTube tutorials.">
+<style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>AI Film School</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Source+Sans+3:ital,wght@0,400;0,600;0,700;1,400&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+/* Layout: sticky lesson rail on the left (a film slate column), one reading column on the right. Stacks on phones. */
+:root{
+  --bg:#eef2f0; --paper:#ffffff; --ink:#15211d; --muted:#55645f; --line:#cfd9d5;
+  --teal:#1f5f57; --teal-soft:#dcebe7; --yellow:#e9b62a; --yellow-soft:#fbf0cf;
+  --good:#2f7a4a; --bad:#b4442f; --good-soft:#e1f1e6; --bad-soft:#f8e3de;
+  --display:"Bricolage Grotesque", "Avenir Next", "Segoe UI", sans-serif;
+  --body:"Source Sans 3", "Segoe UI", system-ui, sans-serif;
+  --mono:"JetBrains Mono", ui-monospace, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0f1715; --paper:#16211e; --ink:#e3ece8; --muted:#9fb0aa; --line:#2b3a36;
+  --teal:#7fc8bb; --teal-soft:#1d332e; --yellow:#f0c445; --yellow-soft:#33290f;
+  --good:#7fcf98; --bad:#f09a86; --good-soft:#18301f; --bad-soft:#3a1e18; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0f1715; --paper:#16211e; --ink:#e3ece8; --muted:#9fb0aa; --line:#2b3a36;
+  --teal:#7fc8bb; --teal-soft:#1d332e; --yellow:#f0c445; --yellow-soft:#33290f;
+  --good:#7fcf98; --bad:#f09a86; --good-soft:#18301f; --bad-soft:#3a1e18; color-scheme:dark}
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font:400 17px/1.6 var(--body);
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+a{color:var(--teal)}
+:focus-visible{outline:3px solid var(--yellow);outline-offset:2px}
+h1,h2,h3{font-family:var(--display);text-wrap:balance;line-height:1.15;margin:0}
+.wrap{max-width:1180px;margin:0 auto;display:grid;grid-template-columns:250px minmax(0,1fr);gap:48px;padding-block:40px 80px}
+@media (max-width:860px){.wrap{grid-template-columns:minmax(0,1fr);gap:24px;padding-block:24px 60px}}
+
+/* rail */
+nav.rail{position:sticky;top:calc(env(safe-area-inset-top,0px) + 24px);align-self:start;display:flex;flex-direction:column;gap:14px}
+@media (max-width:860px){nav.rail{position:static}}
+.slate{font-family:var(--mono);font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.progress{height:6px;background:var(--line);border-radius:3px;overflow:hidden}
+.progress span{display:block;height:100%;width:0;background:var(--yellow);transition:width .3s}
+nav.rail ol{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:2px}
+@media (max-width:860px){nav.rail ol{display:none}}
+nav.rail a{display:flex;gap:10px;align-items:baseline;padding:5px 8px;border-radius:6px;text-decoration:none;color:var(--ink);font-size:15px}
+nav.rail a:hover{background:var(--teal-soft)}
+nav.rail a .n{font-family:var(--mono);font-size:11px;color:var(--muted);min-width:22px}
+nav.rail a.done .t{text-decoration:line-through;color:var(--muted)}
+
+/* main */
+main{min-width:0;display:flex;flex-direction:column;gap:56px}
+header.intro{display:flex;flex-direction:column;gap:16px;max-width:68ch}
+header.intro h1{font-size:clamp(34px,5vw,54px);font-weight:800;letter-spacing:-.02em}
+header.intro p{margin:0;color:var(--muted);font-size:19px}
+.facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-top:8px}
+.fact{border-top:3px solid var(--yellow);padding-top:8px}
+.fact b{display:block;font-family:var(--display);font-size:26px;font-variant-numeric:tabular-nums}
+.fact span{font-size:14px;color:var(--muted)}
+
+section.block{display:flex;flex-direction:column;gap:18px;max-width:72ch}
+section.block>h2{font-size:30px;font-weight:800}
+.lead{margin:0;font-size:18px}
+
+/* tools table */
+.tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:10px;background:var(--paper)}
+table{border-collapse:collapse;width:100%;min-width:560px;font-size:15.5px}
+th,td{text-align:left;padding:10px 14px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-family:var(--mono);font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:500}
+tr:last-child td{border-bottom:0}
+td:first-child{font-weight:600;white-space:nowrap}
+
+/* the big idea loop */
+.loop{display:flex;flex-wrap:wrap;gap:8px;align-items:center;font-weight:600}
+.loop span{background:var(--paper);border:1px solid var(--line);padding:6px 12px;border-radius:999px}
+.loop i{font-style:normal;color:var(--muted)}
+
+/* lessons */
+article.lesson{background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:28px clamp(18px,4vw,36px);display:flex;flex-direction:column;gap:16px;max-width:76ch;scroll-margin-top:20px}
+.lhead{display:flex;justify-content:space-between;gap:16px;align-items:flex-start;flex-wrap:wrap}
+.lhead .slate{display:block;margin-bottom:6px}
+.lhead h2{font-size:clamp(24px,3vw,30px);font-weight:800}
+.why{margin:0;padding:12px 16px;background:var(--teal-soft);border-radius:8px}
+.why b{font-family:var(--mono);font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--teal);margin-right:8px;font-weight:500}
+article h3{font-size:18px;font-weight:600;margin-top:4px}
+ol.steps{margin:0;padding-left:1.4em;display:flex;flex-direction:column;gap:8px}
+ol.steps li::marker{font-family:var(--mono);color:var(--teal);font-size:14px}
+.dd{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media (max-width:640px){.dd{grid-template-columns:1fr}}
+.dd>div{border-radius:8px;padding:12px 14px;min-width:0}
+.dd .do{background:var(--good-soft)}
+.dd .dont{background:var(--bad-soft)}
+.dd h4{margin:0 0 6px;font-family:var(--mono);font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;font-weight:500}
+.dd .do h4{color:var(--good)} .dd .dont h4{color:var(--bad)}
+.dd ul{margin:0;padding-left:1.1em;display:flex;flex-direction:column;gap:4px;font-size:15.5px}
+.story{margin:0;border-left:3px solid var(--yellow);padding:4px 0 4px 14px;color:var(--muted);font-size:15.5px}
+.story b{color:var(--ink)}
+.prompt{font-family:var(--mono);font-size:13.5px;line-height:1.55;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:12px 14px;white-space:pre-wrap;overflow-wrap:anywhere;margin:0}
+.ex{display:grid;gap:10px}
+.ex .lbl{font-family:var(--mono);font-size:11.5px;letter-spacing:.06em;text-transform:uppercase}
+.ex .bad{color:var(--bad)} .ex .good{color:var(--good)}
+
+/* checkbox */
+label.check{display:flex;gap:8px;align-items:center;font-size:14px;color:var(--muted);cursor:pointer;white-space:nowrap;user-select:none;padding:6px 10px;border:1px solid var(--line);border-radius:999px}
+label.check input{width:16px;height:16px;accent-color:var(--teal)}
+label.check:has(input:checked){background:var(--yellow-soft);border-color:var(--yellow);color:var(--ink)}
+
+/* checklist + glossary */
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+.term{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:12px 14px}
+.term b{display:block;font-family:var(--display);font-size:17px}
+.term span{font-size:15px;color:var(--muted)}
+ul.checklist{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
+ul.checklist li{display:flex;gap:10px;align-items:baseline}
+ul.checklist li::before{content:"";flex:0 0 12px;height:12px;border:2px solid var(--teal);border-radius:3px;transform:translateY(2px)}
+.sources li{margin-bottom:6px}
+footer{color:var(--muted);font-size:14px;max-width:72ch}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
+html{scroll-behavior:smooth}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+<nav class="rail" aria-label="Lessons">
+  <div class="slate">Course · 10 lessons</div>
+  <div class="progress" aria-hidden="true"><span id="bar"></span></div>
+  <div class="slate" id="count">0 of 10 done</div>
+  <ol id="toc"></ol>
+</nav>
+
+<main>
+<header class="intro">
+  <div class="slate">Unofficial notes · Not made by or affiliated with Higgsfield</div>
+  <h1>How to make an AI film that doesn't look like AI</h1>
+  <p>A short study guide based on four public Higgsfield AI YouTube videos, where a team made an 80-minute AI feature film in 14 days. You get their full workflow, step by step, with the mistakes they made and how they fixed them.</p>
+  <div class="facts">
+    <div class="fact"><b>~800</b><span>generations by one person in one day</span></div>
+    <div class="fact"><b>8</b><span>shots from those 800 made the film</span></div>
+    <div class="fact"><b>72</b><span>tries for one 10-second shot</span></div>
+    <div class="fact"><b>~$400K</b><span>generation cost for the whole feature</span></div>
+  </div>
+</header>
+
+<section class="block" id="big-idea">
+  <h2>The one big idea</h2>
+  <p class="lead">AI filmmaking is not "type a prompt, get a film". It is a loop you repeat hundreds of times. The first try almost never works. Every failed try tells you what to fix in the next prompt.</p>
+  <div class="loop" aria-label="The work loop">
+    <span>Describe to Claude</span><i>→</i><span>Get a detailed prompt</span><i>→</i><span>Generate a small batch</span><i>→</i><span>Look at what's wrong</span><i>→</i><span>Tell Claude the fix</span><i>↺</i>
+  </div>
+  <p>Two rules decide most of your success:</p>
+  <ul>
+    <li><b>The images matter more than the prompt.</b> A video copies the light, texture and mistakes of its reference images. Fix images first, because images are cheap and video is expensive.</li>
+    <li><b>Batch, then judge.</b> If all takes fail the same way, the prompt is wrong. If the motion is right and only details break, keep batching the same prompt.</li>
+  </ul>
+</section>
+
+<section class="block" id="tools">
+  <h2>The tools and what each one does</h2>
+  <p class="lead">You need two places: <b>Claude</b> writes everything, <b>Higgsfield</b> generates everything. A video editor puts it together.</p>
+  <div class="tablewrap"><table>
+    <thead><tr><th>Tool</th><th>Use it for</th></tr></thead>
+    <tbody>
+      <tr><td>Claude + skills</td><td>Turning the script into a shot list and writing every image and video prompt. Skills are reusable instruction files you upload once (shot list, acting, fights, lenses).</td></tr>
+      <tr><td>Higgsfield Cinema Studio</td><td>Your project home: folders per scene, all image and video models in one place.</td></tr>
+      <tr><td>Collab projects &amp; Canvas</td><td>Sharing with a team. Everyone sees the asset, its prompt and the tool used. Canvas is one board holding all final assets.</td></tr>
+      <tr><td>Elements (@tags)</td><td>Saving a character, outfit or place under a name like <code>@bear</code>, so it is attached every time you type the tag.</td></tr>
+      <tr><td>Soul Cinema</td><td>Cheap, creative image model. Good for exploring looks and locations in big batches.</td></tr>
+      <tr><td>Nano Banana Pro</td><td>Images from long, detailed prompts. Very consistent, but can look "plastic" without lighting words.</td></tr>
+      <tr><td>GPT Image 2 / 2.5</td><td>Editing an existing image and image-to-image work.</td></tr>
+      <tr><td>Seedream 5.0 Pro</td><td>Realistic surfaces: skin pores, hair, fur, fabric. Also recolouring an image without changing the framing.</td></tr>
+      <tr><td>AI Cast</td><td>Finding a face by type: age, era, archetype, budget.</td></tr>
+      <tr><td>Seedance 2.0 / 2.5</td><td>The video model. Also Draft mode (480p), Extend, Object Swap and new angles from a video.</td></tr>
+      <tr><td>Seed Audio Voice Change</td><td>Swapping a character's voice for a preset one. Cheap, so try several.</td></tr>
+      <tr><td>Photoshop + any editor</td><td>Collaging props, cutting the film, adding your own music and sound.</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<!-- LESSONS -->
+<article class="lesson" id="l1" data-title="Set up the project">
+  <div class="lhead"><div><span class="slate">Lesson 01</span><h2>Set up the project</h2></div><label class="check"><input type="checkbox" id="c1"> Done</label></div>
+  <p class="why"><b>Why</b>A film has hundreds of assets. Without order you lose them and grab the wrong one.</p>
+  <ol class="steps">
+    <li>In Cinema Studio, create a project for the film.</li>
+    <li>Make one folder per scene, with subfolders: characters, locations, props (outfits go in props).</li>
+    <li>Make a Canvas and put only <b>final, approved</b> assets on it.</li>
+    <li>Working with others? Share the project as a Collab and set permissions (viewer, collaborator, approval required).</li>
+  </ol>
+  <p class="story">From the video: one teammate generated a whole scene with an old draft of a character's skin that was still on the canvas. The scene had to be redone. <b>Keep the canvas clean.</b></p>
+</article>
+
+<article class="lesson" id="l2" data-title="Write a style prefix">
+  <div class="lhead"><div><span class="slate">Lesson 02</span><h2>Write a style prefix</h2></div><label class="check"><input type="checkbox" id="c2"> Done</label></div>
+  <p class="why"><b>Why</b>One text block on top of every prompt keeps the whole film one look, even with 15 people generating.</p>
+  <h3>What to put in it</h3>
+  <ol class="steps">
+    <li><b>Look:</b> colour palette, framing, film texture.</li>
+    <li><b>Light:</b> "practical light only": sun, windows, lamps that are in the frame. Nothing else.</li>
+    <li><b>Audio:</b> "environmental sound effects only, no music, no subtitles".</li>
+    <li><b>Frame rate:</b> 24 fps.</li>
+  </ol>
+  <div class="dd">
+    <div class="do"><h4>Do</h4><ul><li>Say where light comes from</li><li>Ban music in the generation, add your own later</li><li>Use a 60/30/10 colour split: 60% main colour, 30% second, 10% accent</li></ul></div>
+    <div class="dont"><h4>Don't</h4><ul><li>Let hidden light sources in: faces lit from nowhere look pasted in</li><li>Trust the model's music: Seedance gives one audio track, you cannot separate it later</li></ul></div>
+  </div>
+</article>
+
+<article class="lesson" id="l3" data-title="Script to shot list">
+  <div class="lhead"><div><span class="slate">Lesson 03</span><h2>Turn the script into a shot list</h2></div><label class="check"><input type="checkbox" id="c3"> Done</label></div>
+  <p class="why"><b>Why</b>A shot list cuts the story into small pieces (about 15 seconds each) that a video model can handle, and keeps every prompt in one place for later fixes.</p>
+  <ol class="steps">
+    <li>In Claude: Customize → Skills → upload the shot list skill.</li>
+    <li>Start a chat, call the skill, upload the script, say which scenes you want, paste the style prefix.</li>
+    <li><b>Phase 1:</b> Claude splits scenes into shots with prompts.</li>
+    <li><b>Phase 2:</b> Claude lists the assets you need: characters, locations, props.</li>
+    <li><b>Phase 3:</b> after you make the assets, upload them and Claude maps them onto the prompts.</li>
+    <li>Ask for the list as an HTML page with two columns: description on the left, prompt on the right.</li>
+  </ol>
+  <div class="dd">
+    <div class="do"><h4>Do</h4><ul><li>Put "failure modes" (what must not happen) inside each prompt</li><li>Ask Claude to update only the one prompt you changed. They report it saves ~80% of tokens</li><li>Edit with "for prompt 21A: …"</li></ul></div>
+    <div class="dont"><h4>Don't</h4><ul><li>Re-render the whole list for one fix</li><li>Keep adding fixes to one prompt forever (see Lesson 07)</li></ul></div>
+  </div>
+</article>
+
+<article class="lesson" id="l4" data-title="Build characters">
+  <div class="lhead"><div><span class="slate">Lesson 04</span><h2>Build characters</h2></div><label class="check"><input type="checkbox" id="c4"> Done</label></div>
+  <p class="why"><b>Why</b>The character must look the same in every shot. A sheet tells the model exactly who to draw.</p>
+  <ol class="steps">
+    <li>Describe the character to Claude in plain words. It writes the detailed prompt.</li>
+    <li>Generate a <b>character sheet</b>: face on the left, full body on the right, plain grey background.</li>
+    <li>Check up close. Skin patchy or plastic, hair "dead"? Run the sheet through <b>Seedream</b> with real reference photos for skin, hair and fabric. It's like texturing a 3D model.</li>
+    <li>Make <b>outfits as separate sheets</b>, so clothes change without rebuilding the character.</li>
+    <li>Save each as an Element with a tag (<code>@bear</code>).</li>
+    <li>Make a <b>video element</b>: upload a short real voice recording ("This is how I look, and this is how I sound") plus a line on how the character moves.</li>
+    <li>Long film? Keep one sheet per <b>state</b>: clean, injured, half-transformed. This is script supervising.</li>
+  </ol>
+  <p class="story">From the video: the same line with an image element vs. a video element. The video element version sounds and moves like a real person, so fewer takes get thrown away.</p>
+  <div class="dd">
+    <div class="do"><h4>Do</h4><ul><li>Use AI Cast when you know the type but not the face</li><li>Cut the face from a wide shot of the sheet if the wide face looks off</li></ul></div>
+    <div class="dont"><h4>Don't</h4><ul><li>Animate a character that looks plastic: video makes it worse</li><li>Describe the face in the prompt when you attach a sheet. The model invents a new person</li></ul></div>
+  </div>
+</article>
+
+<article class="lesson" id="l5" data-title="Build locations">
+  <div class="lhead"><div><span class="slate">Lesson 05</span><h2>Build locations</h2></div><label class="check"><input type="checkbox" id="c5"> Done</label></div>
+  <p class="why"><b>Why</b>Most of the light and style in a video comes from the location image. A sloppy location gives a sloppy video.</p>
+  <ol class="steps">
+    <li>Describe the place to Claude: layout, windows, doors, what is where. Ask for a <b>single view</b> prompt.</li>
+    <li>Generate in <b>batches of 4</b> (21:9 for cinema).</li>
+    <li>Don't read the long prompt. Look at the images and tell Claude what's wrong: "lost the hallway", "make the wall red".</li>
+    <li>Repeat. The apartment in the video took <b>44 tries</b>.</li>
+    <li>When it's close, stop editing the same image again and again (it loses detail). Ask Claude for a fresh full prompt of that layout.</li>
+    <li>Make a second view (for example, from the hallway looking in) as its own image.</li>
+  </ol>
+  <h3>Prompt like a photographer</h3>
+  <div class="ex">
+    <span class="lbl bad">Weak</span>
+    <p class="prompt">Small kitchen, table, chairs, window, plants, photorealistic, cinematic, ultra detailed.</p>
+    <span class="lbl good">Strong</span>
+    <p class="prompt">High corner view looking down across the kitchen, 28mm lens, deep focus. Late evening, the only light is a warm lamp over the table and pale blue dusk through the window. Worn wooden table in the foreground, steam rising from a pot. Faint haze, soft film grain, deep shadows in the corners.</p>
+  </div>
+  <div class="dd">
+    <div class="do"><h4>Do</h4><ul><li>Shoot from 3/4 or a high corner ("CCTV")</li><li>Give every place an <b>anchor</b> (a tree, a bookshelf) to place people and camera</li><li>Add haze, grain and light words to fight the plastic look</li><li>Keep the frame simple. Clutter melts when it moves</li></ul></div>
+    <div class="dont"><h4>Don't</h4><ul><li>Shoot a location head-on. The model loses depth</li><li>Put front and back views in one image. The model mixes them up</li><li>Upload a city photo into the image model for a room. It may put the room outdoors</li></ul></div>
+  </div>
+  <p class="story">Not sure what lens to name? Show Claude a still from a film you like and ask which camera and lens made it.</p>
+</article>
+
+<article class="lesson" id="l6" data-title="Make props">
+  <div class="lhead"><div><span class="slate">Lesson 06</span><h2>Make props</h2></div><label class="check"><input type="checkbox" id="c6"> Done</label></div>
+  <p class="why"><b>Why</b>Props carry story ("lore"): a photo wall says "these people were family" without words.</p>
+  <ol class="steps">
+    <li>Simple prop (a sticky note): a short prompt is enough.</li>
+    <li>Prop with faces (a Polaroid): attach the character sheets and tag who is who.</li>
+    <li>Many faces (a photo wall): generate <b>each photo separately</b>, then combine in Photoshop.</li>
+    <li>Tricky shape (a monster claw): make a prop sheet showing it from outside and inside.</li>
+  </ol>
+  <p class="story">From the video: one prompt for a wall of 12 Polaroids broke every face. Twelve separate images kept them right.</p>
+</article>
+
+<article class="lesson" id="l7" data-title="Generate the video">
+  <div class="lhead"><div><span class="slate">Lesson 07</span><h2>Generate the video</h2></div><label class="check"><input type="checkbox" id="c7"> Done</label></div>
+  <p class="why"><b>Why</b>This is where the money goes. Smart testing saves most of it.</p>
+  <ol class="steps">
+    <li>Attach references <b>in the order the prompt names them</b>: image 1 = character, image 2 = location, and so on.</li>
+    <li>Run <b>Draft at 480p</b>, batches of 4–8. You are only checking framing and who stands where.</li>
+    <li>Skim each take. If the composition is wrong, skip it.</li>
+    <li>All fail the same way? Fix the prompt in Claude. Motion right, details off? Batch more of the same prompt.</li>
+    <li>Re-run only the winning takes at 1080p.</li>
+  </ol>
+  <h3>Single shot or multi-shot?</h3>
+  <p>Use <b>multi-shot</b> (several cuts in one generation) for dialogue and action. It keeps light and positions consistent. Use <b>single shot</b> for everything else. If a single shot cuts by itself, tell Claude: "one continuous shot, don't split it into beats".</p>
+  <h3>Camera and space</h3>
+  <ul>
+    <li>Place the camera against the anchor: "camera right beside the fridge, fridge barely visible on the right edge of frame".</li>
+    <li>For hard layouts, ask Claude for a <b>top-down map</b> first, or mark start positions on an overhead frame and attach it as a "blocking reference".</li>
+    <li>Ask Claude to describe the room's layout in a "spatial layout block" inside the prompt.</li>
+    <li>One camera move per emotional shot. A push-in plus a rise plus a shake is too much.</li>
+  </ul>
+  <div class="dd">
+    <div class="do"><h4>Do</h4><ul><li>When a prompt grows too long and contradicts itself, say "scrap it, start from scratch"</li><li>Screenshot the one good moment of a bad take and use it as the reference for the next</li><li>Use Extend to finish a shot that ends early</li><li>Generate new angles from a good take ("same moves, different camera")</li></ul></div>
+    <div class="dont"><h4>Don't</h4><ul><li>Keep stacking fixes on one prompt</li><li>Panic on a failed or blocked generation. Failed ones cost no credits; reword the prompt</li></ul></div>
+  </div>
+</article>
+
+<article class="lesson" id="l8" data-title="Direct the acting">
+  <div class="lhead"><div><span class="slate">Lesson 08</span><h2>Direct the acting and dialogue</h2></div><label class="check"><input type="checkbox" id="c8"> Done</label></div>
+  <p class="why"><b>Why</b>Flat, robot reactions are what make AI look like AI. Feeling and body detail fix it.</p>
+  <h3>Describe the feeling and the body, not just the action</h3>
+  <div class="ex">
+    <span class="lbl bad">Weak</span>
+    <p class="prompt">Mara reads the letter and is sad.</p>
+    <span class="lbl good">Strong</span>
+    <p class="prompt">Mara reads the letter from her brother and realises he is not coming home. She tries to stay calm in front of her son. Her eyes stop moving halfway down the page, her jaw tightens, she swallows hard, folds the letter too carefully and presses it flat with both hands. No tears yet.</p>
+  </div>
+  <ul>
+    <li><b>Say what the character wants</b> from the other person. The acting skill builds the performance around that ("he's trying to convince the interviewer, but doesn't believe it himself").</li>
+    <li>Small details sell emotion: "lower lip trembles", "walks so slowly it reads like being dragged by grief".</li>
+    <li><b>Dialogue:</b> start with a wide establishing shot, give lines word for word, spell hard words by sound, leave room for pauses.</li>
+    <li><b>Fights:</b> write them beat by beat (who, where, which move, how each one falls) and use the fight skill. Hide cuts in whip pans.</li>
+    <li><b>Voice:</b> direct the performance first, then try preset voices in Voice Change and keep the one that fits.</li>
+  </ul>
+</article>
+
+<article class="lesson" id="l9" data-title="Edit as you go">
+  <div class="lhead"><div><span class="slate">Lesson 09</span><h2>Edit as you go</h2></div><label class="check"><input type="checkbox" id="c9"> Done</label></div>
+  <p class="why"><b>Why</b>Seeing shots side by side with music tells you what is missing and which shot to fix next.</p>
+  <ol class="steps">
+    <li>Open a timeline with temp music before you generate.</li>
+    <li>Drop each good take in right away and trim it.</li>
+    <li>Cut on movement. Use an <b>L-cut</b>: the sound of one shot (a door closing) runs into the next.</li>
+    <li>Missing a beat? Add a new shot to the list between two others ("a wide establishing shot between 21B and 21C").</li>
+    <li>Review frame by frame. One bad frame can ruin a shot.</li>
+    <li>Choppy motion (fps drop)? Step through, delete doubled frames. The audio breaks, so use it as B-roll.</li>
+    <li>A failed take may still hold 1–2 good seconds. Cut and use them.</li>
+    <li>Repeat the last line of one generation at the start of the next, so you can choose where to cut.</li>
+  </ol>
+  <p class="story">Stuck on a shot? Move on and come back with fresh eyes. Unlike a real shoot, you can always regenerate.</p>
+</article>
+
+<article class="lesson" id="l10" data-title="Work as a team">
+  <div class="lhead"><div><span class="slate">Lesson 10</span><h2>Work as a team</h2></div><label class="check"><input type="checkbox" id="c10"> Done</label></div>
+  <p class="why"><b>Why</b>After many hours alone you stop seeing mistakes.</p>
+  <ul>
+    <li>Work in pairs, at least two people per scene.</li>
+    <li>Pick a <b>"slop director"</b>: one person who checks every shot before it goes in. "Slop" or "not slop".</li>
+    <li>Don't make one person the only director in a fast project. They won't have time to generate.</li>
+    <li>Share through Collab projects, not downloaded files, so the prompts travel with the images.</li>
+    <li>Keep every character state and location on one canvas everyone uses.</li>
+  </ul>
+</article>
+
+<section class="block" id="checklist">
+  <h2>Before you press Generate on a video</h2>
+  <ul class="checklist">
+    <li>The style prefix is at the top of the prompt.</li>
+    <li>Reference images are clean: no plastic skin, no hidden light, no clutter.</li>
+    <li>References are attached in the order the prompt names them.</li>
+    <li>Camera position is tied to an anchor in the room.</li>
+    <li>Emotion and body detail are written, not just the action.</li>
+    <li>Dialogue is word for word; hard words spelled by sound.</li>
+    <li>"No music, no subtitles, 24 fps" is in the prompt.</li>
+    <li>Draft mode is on (480p) and the batch is small.</li>
+  </ul>
+</section>
+
+<section class="block" id="words">
+  <h2>Words to know</h2>
+  <div class="cards">
+    <div class="term"><b>Batch</b><span>Several takes from one prompt, run at once.</span></div>
+    <div class="term"><b>Slop</b><span>A take that looks fake: morphing, plastic skin, wrong layout.</span></div>
+    <div class="term"><b>Keyframe / reference</b><span>The image the video starts from or copies.</span></div>
+    <div class="term"><b>Style prefix</b><span>Shared text on top of every prompt for one look.</span></div>
+    <div class="term"><b>Element</b><span>A saved asset you call with a tag like @bear.</span></div>
+    <div class="term"><b>Anchor</b><span>A clear object in a location used to place camera and people.</span></div>
+    <div class="term"><b>Establishing shot</b><span>A wide shot that shows where everyone is.</span></div>
+    <div class="term"><b>L-cut</b><span>Sound from one shot carries over the next shot.</span></div>
+    <div class="term"><b>B-roll</b><span>Extra shots cut into the main scene, often silent.</span></div>
+    <div class="term"><b>Script supervising</b><span>Tracking each character's look, injuries and props across scenes.</span></div>
+  </div>
+</section>
+
+<section class="block" id="sources">
+  <h2>Sources</h2>
+  <p>Built from the auto-captions of these Higgsfield AI videos. Prompt examples are shortened.</p>
+  <ul class="sources">
+    <li><a href="https://www.youtube.com/watch?v=-scKERL7PK0">How to Make AI Films That Don't Look AI (Full Tutorial)</a>: locations, props, Seedance iteration, editing</li>
+    <li><a href="https://www.youtube.com/watch?v=6aJ2BneDB5M">How to Make Ultra Realistic AI Videos (28 Best Tips)</a>: prompting, pre-production, teamwork, editing hacks</li>
+    <li><a href="https://www.youtube.com/watch?v=wFbgrPmVXb0">How I Make Realistic AI Short Films Using Seedance 2.5</a>: video elements, textures, fights, dialogue</li>
+    <li><a href="https://www.youtube.com/watch?v=sCukTWZEt7Q">The Cheapest Way to Make an AI Short</a>: 480p drafts, outfits, voices, saving credits</li>
+  </ul>
+</section>
+
+<footer>Your "Done" ticks are saved only in this browser.</footer>
+</main>
+</div>
+
+<script>
+(function(){
+  const lessons=[...document.querySelectorAll('article.lesson')];
+  const toc=document.getElementById('toc');
+  lessons.forEach((a,i)=>{
+    const li=document.createElement('li');
+    li.innerHTML='<a href="#'+a.id+'"><span class="n">'+String(i+1).padStart(2,'0')+'</span><span class="t"></span></a>';
+    li.querySelector('.t').textContent=a.dataset.title;
+    toc.appendChild(li);
+  });
+  const KEY='ai-film-course-done';
+  let saved={};
+  try{saved=JSON.parse(localStorage.getItem(KEY)||'{}')||{}}catch(e){}
+  function update(){
+    let n=0;
+    lessons.forEach((a,i)=>{const c=a.querySelector('input');if(c.checked)n++;toc.children[i].firstChild.classList.toggle('done',c.checked)});
+    document.getElementById('bar').style.width=(n/lessons.length*100)+'%';
+    document.getElementById('count').textContent=n+' of '+lessons.length+' done';
+  }
+  lessons.forEach(a=>{
+    const c=a.querySelector('input');
+    c.checked=!!saved[c.id];
+    c.addEventListener('change',()=>{saved[c.id]=c.checked;try{localStorage.setItem(KEY,JSON.stringify(saved))}catch(e){}update()});
+  });
+  update();
+})();
+</script>
+</body>
+</html>
